@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Speech to Text Converter</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    #speech-to-text{
+        margin-top: 120px;
+    }
+</style>
+</head>
+<body class="bg-gray-100">
+  
+<div id="speech-to-text" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold mb-4">Speech to Text Converter</h1>
+  <button id="start-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">🎤 Start</button>
+  <button id="stop-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2 focus:outline-none focus:shadow-outline transition duration-300">⏹️ Stop</button> 
+  <p id="instructions" class="mt-4">Press the Start button</p>
+  <textarea id="textbox" rows="6" class="mt-4 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"></textarea>
+</div>
+
+<script>
+  var speechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+  var recognition = new speechRecognition();
+  var textbox = document.getElementById("textbox");
+  var instructions = document.getElementById("instructions");
+
+  recognition.continuous = true;
+
+  recognition.onstart = function() {
+    instructions.textContent = "Voice Recognition is On";
+  }
+
+  recognition.onspeechend = function() {
+    instructions.textContent = "No Activity";
+  }
+
+  recognition.onerror = function() {
+    instructions.textContent = "Try Again";
+  }
+
+  recognition.onresult = function(event) {
+    var current = event.resultIndex;
+    var transcript = event.results[current][0].transcript;
+    textbox.value += transcript;
+  }
+
+  recognition.onend = function() {
+    instructions.textContent = "Voice Recognition Stopped";
+  }
+
+  document.getElementById("stop-btn").addEventListener("click", function() {
+    recognition.stop();
+  });
+
+  document.getElementById("start-btn").addEventListener("click", function() {
+    recognition.start();
+  });
+
+  textbox.addEventListener('input', function() {
+    content = this.value;
+  });
+</script>
+</body>
+</html>
+
